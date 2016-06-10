@@ -1,0 +1,67 @@
+function c= spectral()
+BW= imread('bw.jpg');
+I=double(BW);
+[row,cloumns]= size(I);
+s= row*cloumns;
+A= zeros(s,s);
+sigma =0.1;
+% calculate similarity Matrix
+I=reshape(I,1,7500);
+disp(I);
+for i=1:s
+    for j=1:s
+        
+        A(i,j)=exp(-norm(I(1,i)-I(1,j))^2/(2*sigma^2));
+        
+    end
+end
+ 
+ 
+temp=zeros(s,1);
+ 
+for j=1:s
+ 
+    temp(j,1)=sum(A(j,1:end));
+end
+ 
+D=diag(temp);
+ 
+%Laplacian MAtrix
+L= D-A;
+e= eig(L);
+[Vect,Val] = eig(L) ;
+k=2;
+eigVTemp=diag(Val);
+SortVTemp=sort(eigVTemp);
+ 
+smallVal=SortVTemp(1:k,1);
+ 
+ 
+V=zeros(s,k);
+ 
+%search values in VAL
+for i=1:s
+   for j=1:k
+       
+       if Val(i,i)==smallVal(j,1)
+           V(1:end,j)=Vect(1:end,i);
+           
+        end   
+  
+    end
+ 
+end
+ 
+idx=kmeans(V,k);
+clustidx=idx';
+c=zeros(1,s);
+for i=1:s
+    if(clustidx(1,i)==1)
+        c(1,i)= 0;
+    else
+        c(1,i)= 22;
+    end
+end
+d=reshape(c,75,100);
+imagesc(d);
+end
